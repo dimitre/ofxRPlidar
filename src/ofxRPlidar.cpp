@@ -241,14 +241,20 @@ vector<device::A2::ScannedData> device::A2::scan(bool ascend)
 		for (int i = 0; i < count ; ++i) {
 			ScannedData &data = ret[i];
 			
-			sl_u16   angle_z_q14;
-			sl_u32   dist_mm_q2;
-			sl_u8    quality;
-			sl_u8    flag;
+//			sl_u16   angle_z_q14;
+//			sl_u32   dist_mm_q2;
+//			sl_u8    quality;
+//			sl_u8    flag;
+//
 			
+//			(nodes[pos].flag & SL_LIDAR_RESP_HQ_FLAG_SYNCBIT) ?"S ":"  ",
+//			(nodes[pos].angle_z_q14 * 90.f) / 16384.f,
+//			nodes[pos].dist_mm_q2/4.0f,
+//			nodes[pos].quality >> SL_LIDAR_RESP_MEASUREMENT_QUALITY_SHIFT);
 			
 			data.sync = (nodes[i].quality & RPLIDAR_RESP_MEASUREMENT_SYNCBIT) != 0;
-			data.angle = (nodes[i].angle_z_q14 >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT)/64.0f;
+//			data.angle = (nodes[i].angle_z_q14 >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT)/64.0f;
+			data.angle = (nodes[i].angle_z_q14  * 90.f) / 16384.f;
 			data.distance = nodes[i].dist_mm_q2/4.0f;
 			data.quality = nodes[i].quality >> RPLIDAR_RESP_MEASUREMENT_QUALITY_SHIFT;
 		}

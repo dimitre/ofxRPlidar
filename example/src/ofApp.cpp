@@ -26,9 +26,8 @@ void ofApp::draw(){
 		ofTranslate(glm::vec2(ofGetWidth(), ofGetHeight())/2.f);
 		for(auto &d : data) {
 			if(d.quality > 0) {
-				
-				ofVec2f pos = ofVec2f(d.distance, 0).getRotated(d.angle);
-				ofDrawCircle(pos, 5);
+				ofVec2f pos = ofVec2f(d.distance*.2, 0).getRotated(d.angle);
+				ofDrawCircle(pos, 3);
 			}
 		}
 		ofPopMatrix();
@@ -42,50 +41,5 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
 }
