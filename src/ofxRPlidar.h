@@ -51,7 +51,7 @@ public:
 	bool isFrameNew() const { return is_frame_new_; }
 	std::vector<ScannedData> scan(bool ascend=true);
 	std::vector<ScannedData> getResult();
-	std::string getSerialPath() const { serial_path_; }
+	std::string getSerialPath() const { return serial_path_; }
 	std::string getSerialNumber() const;
 protected:
 	std::string serial_path_;

@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "ofVec2f.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -22,9 +23,10 @@ void ofApp::draw(){
 		s->update();
 		auto data = s->getResult();
 		ofPushMatrix();
-		ofTranslate(ofVec2f(ofGetWidth(), ofGetHeight())/2.f);
+		ofTranslate(glm::vec2(ofGetWidth(), ofGetHeight())/2.f);
 		for(auto &d : data) {
 			if(d.quality > 0) {
+				
 				ofVec2f pos = ofVec2f(d.distance, 0).getRotated(d.angle);
 				ofDrawCircle(pos, 5);
 			}
