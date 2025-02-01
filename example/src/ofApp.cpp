@@ -1,5 +1,12 @@
 #include "ofApp.h"
-#include "ofVec2f.h"
+
+//#define GLM_ENABLE_EXPERIMENTAL
+//#include <glm/gtx/polar_coordinates.hpp>
+
+glm::vec2 polarToCartesian(float angle, float m) {
+	float a { glm::radians(angle) };
+	return { m * std::cos(a), m * std::sin(a) };
+}
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -20,19 +27,35 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	for(auto &s : sensors_) {
+		ofSetColor(255);
 		s->update();
 		auto data = s->getResult();
 		ofPushMatrix();
 		ofTranslate(glm::vec2(ofGetWidth(), ofGetHeight())/2.f);
 		for(auto &d : data) {
-			if(d.quality > 0) {
-				ofVec2f pos = ofVec2f(d.distance*.2, 0).getRotated(d.angle);
+			if(d.quality > 0)
+			{
+				glm::vec2 pos = polarToCartesian(d.angle + 90, d.distance * 0.5);
 				ofDrawCircle(pos, 3);
+				
+//				ofSetColor(0, 255, 0);
+//				ofVec2f pos = ofVec2f(d.distance * 0.5 , 0).getRotated(d.angle + 90);
+//				ofDrawCircle(pos, 3);
 			}
 		}
+		
+		ofSetColor(255, 0, 80);
+		ofDrawRectangle(-5, -5, 10, 10);
 		ofPopMatrix();
 	}
 }
+
+void ofApp::exit(){
+	for(auto &s : sensors_) {
+		cout << s->stop() << endl; 
+	}
+}
+
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
