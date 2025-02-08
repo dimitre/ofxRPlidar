@@ -1,2 +1,4 @@
 ofxMicroUI
 ofxRPLidar
+ofxNetwork
+ofxOsc

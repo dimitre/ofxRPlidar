@@ -69,6 +69,10 @@ bool device::A2::connect(const string &serial_path, int baud_rate)
 		return false;
 	}
 	
+//	std::string desc;
+//	driver_->getModelNameDescriptionString(&desc);
+//	cout << desc << endl;
+	
 	// retrieving the device info
 	////////////////////////////////////////
 	op_result = driver_->getDeviceInfo(device_info_);
@@ -84,9 +88,32 @@ bool device::A2::connect(const string &serial_path, int baud_rate)
 		return false;
 	}
 	
-	// print out the device serial number, firmware and hardware version number..
-	string serial_number = getSerialNumber();
-	ofLogVerbose("RPLIDAR", "Serial Number: %s", serial_number.c_str());
+	std::map<int, std::string> models {
+		{ 1, "A" },
+		{ 2, "S" },
+		{ 3, "T" },
+		{ 4, "M" },
+		{ 6, "C" },
+	};
+	
+	cout << "Model: " << int(device_info_.model) << endl;
+	cout << "Model: " << models[int(device_info_.model)] << endl;
+	
+	cout << "Serial: " << getSerialNumber() << endl;
+	cout << "SDK Version: " << RPLIDAR_SDK_VERSION << endl;
+	cout << "Firmware Version: " << (device_info_.firmware_version >> 8) << "." << (device_info_.firmware_version & 0xFF) << endl;
+	cout << "Hardware Rev: " << (int)device_info_.hardware_version << endl;
+	
+
+
+//	LIDAR_MAJOR_TYPE_A_SERIES = 1,
+//	LIDAR_MAJOR_TYPE_S_SERIES = 2,
+//	LIDAR_MAJOR_TYPE_T_SERIES = 3,
+//	LIDAR_MAJOR_TYPE_M_SERIES = 4,
+//	LIDAR_MAJOR_TYPE_C_SERIES = 6,
+	
+	
+//	ofLogVerbose("RPLIDAR", "Serial Number: %s", serial_number.c_str());
 	
 	ofLogVerbose("RPLIDAR", "Version: %s", RPLIDAR_SDK_VERSION);
 	ofLogVerbose("RPLIDAR", "Firmware Ver: %d.%02d", device_info_.firmware_version>>8, device_info_.firmware_version & 0xFF);

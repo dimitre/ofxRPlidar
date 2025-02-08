@@ -3,6 +3,8 @@
 #include "ofMain.h"
 #include "ofxRPlidar.h"
 #include "ofxMicroUI.h"
+#include "ofxOsc.h"
+
 //#include "ofxMicroUISoftware.h"
 
 
@@ -18,6 +20,8 @@ public:
 	void keyReleased(int key);
 	
 	ofxMicroUI u { "u.txt" };
+
+#include "lidar.h"
 	
 private:
 	std::vector<std::shared_ptr<ofxRPlidar>> sensors_;
