@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-//#include "ofxRPlidar.h"
+#include "ofxRPlidar.h"
 #include "ofxMicroUI.h"
 //#include "ofxMicroUISoftware.h"
 
@@ -19,10 +19,7 @@ public:
 	
 	ofxMicroUI u { "u.txt" };
 	
-	
-	
 private:
-//	std::vector<std::shared_ptr<ofxRPlidar>> sensors_;
-	
+	std::vector<std::shared_ptr<ofxRPlidar>> sensors_;
 	
 };
