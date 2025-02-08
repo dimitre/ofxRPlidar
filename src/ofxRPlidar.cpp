@@ -25,7 +25,7 @@ namespace {
 #if defined(TARGET_WIN32)
 		return ofIsStringInString(device.getDeviceName(), "Silicon Labs CP210x USB to UART Bridge");
 #else
-		return ofIsStringInString(device.getDeviceName(), "cu.usbserial-0001");
+		return ofIsStringInString(device.getDeviceName(), "cu.usbserial");
 	#endif
 
 	}
