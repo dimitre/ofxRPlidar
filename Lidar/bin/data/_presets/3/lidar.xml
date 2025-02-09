@@ -1,0 +1,8 @@
+<ofxMicroUI>2</ofxMicroUI>
+<elementsList>
+	<minDistance>650</minDistance>
+	<minAngle>181.5</minAngle>
+	<maxAngle>355.5</maxAngle>
+	<scale>0.166667</scale>
+	<continuous>1</continuous>
+</elementsList>
