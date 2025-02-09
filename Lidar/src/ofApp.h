@@ -20,7 +20,6 @@ public:
 	ofxMicroUI u { "u.txt" };
 	ofxMicroUISoftware soft { &u, "EmptyUIScenes", 1 };
 
-	ofxMicroUI * uiLidar = &u.uis["lidar"];
 #include "lidar.h"
 	
 private:

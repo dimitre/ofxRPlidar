@@ -1,0 +1,9 @@
+label	RECTS
+
+label	WALL
+float	swidth	0 2000 1700
+float	sheight	0 4000 3000
+float	sx	2000 -2000 -900
+float	sy	3000 -3000 0
+
+label	Alvo

@@ -1,13 +1,22 @@
+ofxMicroUI * uiLidar = &u.uis["lidar"];
+ofxMicroUI * uiRects = &u.uis["rects"];
+
 ofxOscSender sender;
+float offAngle = -90;
+glm::vec2 det { 0.0, 0.0 };
+
+bool has = false;
+bool oldHas = false;
+
+ofRectangle stage;
+//ofRectangle
+
+
 glm::vec2 polarToCartesian(float angle, float m) {
 	float a { glm::radians(angle) };
 	return { m * std::cos(a), m * std::sin(a) };
 }
 
-glm::vec2 det { 0.0, 0.0 };
-
-bool has = false;
-bool oldHas = false;
 
 void sendOsc() {
 	ofxOscMessage m;
@@ -25,6 +34,12 @@ void sendOsc() {
 }
 
 void lidarDraw() {
+	stage = ofRectangle(uiRects->pFloat["sx"], uiRects->pFloat["sy"], uiRects->pFloat["swidth"], uiRects->pFloat["sheight"]);
+	ofNoFill();
+	ofSetColor(0, 0, 255);
+	ofDrawRectangle(stage);
+	ofFill();
+//	stage.draw();
 
 	ofSetColor(255);
 	for(auto &s : sensors_) {
@@ -47,7 +62,7 @@ void lidarDraw() {
 				if (d.angle < uiLidar->pFloat["maxAngle"] && d.angle > uiLidar->pFloat["minAngle"])
 					{
 						//						cout << d.angle << endl;
-						glm::vec2 pos = polarToCartesian(d.angle + 90, d.distance);
+						glm::vec2 pos = polarToCartesian(d.angle + offAngle, d.distance);
 						positions.emplace_back(pos);
 						soma += pos;
 						ofDrawCircle(pos * uiLidar->pFloat["scale"], 3);
@@ -99,7 +114,7 @@ void lidarDraw() {
 		ofPath path;
 		path.setCircleResolution(120);
 		float r = uiLidar->pFloat["minDistance"] * uiLidar->pFloat["scale"];
-		path.arc(0, 0, r, r, uiLidar->pFloat["minAngle"] + 90, uiLidar->pFloat["maxAngle"] + 90);
+		path.arc(0, 0, r, r, uiLidar->pFloat["minAngle"] + offAngle, uiLidar->pFloat["maxAngle"] + offAngle);
 		path.setFilled(false);
 		path.setStrokeWidth(1);
 		path.draw();

@@ -63,6 +63,12 @@ bool device::A2::connect(const string &serial_path, int baud_rate)
 	u_result op_result;
 	
 	serial_path_ = serial_path;
+	
+//	cout << serial_path_ << endl;
+	if (serial_path_ == "/dev/cu.usbserial-0001") {
+		baud_rate = 115200;
+	}
+	
 	// try to connect
 	if (IS_FAIL(driver_->connect(serial_path.c_str(), baud_rate))) {
 		ofLogError("RPLIDAR", "Error, cannot bind to the specified serial port %s.\n", serial_path.c_str());
@@ -96,8 +102,9 @@ bool device::A2::connect(const string &serial_path, int baud_rate)
 		{ 6, "C" },
 	};
 	
-	cout << "Model: " << int(device_info_.model) << endl;
-	cout << "Model: " << models[int(device_info_.model)] << endl;
+
+	cout << "Model: " << int(device_info_.model >> 4) << endl;
+	cout << "Model: " << models[int(device_info_.model >> 4)] << endl;
 	
 	cout << "Serial: " << getSerialNumber() << endl;
 	cout << "SDK Version: " << RPLIDAR_SDK_VERSION << endl;
