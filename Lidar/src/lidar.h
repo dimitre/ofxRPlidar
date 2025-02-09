@@ -74,7 +74,7 @@ public:
 			}
 			if (has && !inside) {
 				status = "fora";
-				s = 2
+				s = 2;
 			}
 			{
 				ofxOscMessage m;
@@ -90,6 +90,8 @@ public:
 				sender.sendMessage(m, false);
 			}
 			cout << "	/status/" << status << endl;
+			cout << "	/statusCode/" << s << endl;
+
 		}
 
 		if (has) {
@@ -195,21 +197,24 @@ void lidarDraw() {
 						soma += pos;
 						ofDrawCircle(pos * uiLidar->pFloat["scale"], 3);
 
-						if (positions.size() > 2) {
-							machado.has = true;
-						}
+
 					}
 				}
 			}
 		}
+		
+		if (positions.size() > 2) {
+			machado.has = true;
+		}
 
 		if (machado.oldHas != machado.has) {
 			machado.oldHas = machado.has;
-			if (!uiLidar->pBool["continuous"]) {
+//			if (!uiLidar->pBool["continuous"])
+			{
 				if (machado.has) {
 					soma /= positions.size();
-					machado.setPos(soma);
 				}
+				machado.setPos(soma);
 			}
 			//			cout << "CHANGE " << has << endl;
 		}
