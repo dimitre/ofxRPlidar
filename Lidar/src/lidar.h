@@ -13,11 +13,10 @@ float offAngle = -90;
 
 struct detection {
 public:
-	
 	ofRectangle stage;
 	ofRectangle alvo;
 	float scale = 1.0;
-	
+
 	bool has = false;
 	bool oldHas = false;
 	glm::vec2 det { 0.0, 0.0 };
@@ -35,21 +34,20 @@ public:
 		set.port = 8000;
 		set.broadcast = true;
 		sender.setup(set);
-
 	}
-	
+
 	void setPos(glm::vec2 v) {
 		det = v;
 		cout << "detection setPos " << v << endl;
-//		cout << det << endl;
+		//		cout << det << endl;
 
 		inside = alvo.inside(pos);
-		
+
 		pos = glm::vec2 {
 			det.x * scale,
 			det.y * scale
 		};
-		
+
 		posStage = glm::vec2 {
 			ofMap(pos.x, stage.x, stage.x + stage.width, 0.0, 1.0),
 			ofMap(pos.y, stage.y, stage.y + stage.height, 0.0, 1.0),
@@ -63,24 +61,37 @@ public:
 
 		// FIXME: sendOsc pode ser aqui dentro.
 	}
-	
+
 	void sendOsc() {
 		cout << "sendOsc" << endl;
 		{
-			ofxOscMessage m;
+
+			int s = 0;
 			string status { "limpa" };
 			if (has && inside) {
 				status = "dentro";
+				s = 1;
 			}
 			if (has && !inside) {
 				status = "fora";
+				s = 2
 			}
-			m.setAddress("/status");
-			m.addStringArg(status);
-			sender.sendMessage(m, false);
+			{
+				ofxOscMessage m;
+				m.setAddress("/status");
+				m.addStringArg(status);
+				sender.sendMessage(m, false);
+			}
+
+			{
+				ofxOscMessage m;
+				m.setAddress("/statusCode");
+				m.addIntArg(s);
+				sender.sendMessage(m, false);
+			}
 			cout << "	/status/" << status << endl;
 		}
-		
+
 		if (has) {
 			{
 				ofxOscMessage m;
@@ -96,7 +107,6 @@ public:
 				m.addFloatArg(posStage.x);
 				m.addFloatArg(posStage.y);
 				sender.sendMessage(m, false);
-
 			}
 			{
 				ofxOscMessage m;
@@ -105,26 +115,24 @@ public:
 				m.addFloatArg(posAlvo.y);
 				sender.sendMessage(m, false);
 			}
-			
+
 			cout << "	/pos/" << det << endl;
 			cout << "	/posStage/" << posStage << endl;
 			cout << "	/posAlvo/" << posAlvo << endl;
 		}
 	}
-	
 
-	
 	void draw() {
 		ofPushStyle();
 
 		ofNoFill();
 		ofSetColor(0, 0, 255);
 		ofDrawRectangle(stage);
-	   ofSetColor(0, 255, 0);
-	   ofDrawRectangle(alvo);
-		
+		ofSetColor(0, 255, 0);
+		ofDrawRectangle(alvo);
+
 		if (has) {
-			
+
 			if (inside) {
 				ofSetColor(0, 255, 0);
 			} else {
@@ -137,7 +145,6 @@ public:
 			ofDrawCircle(pos.x, pos.y, 8.0);
 		}
 		ofPopStyle();
-
 	}
 } machado;
 
@@ -146,47 +153,42 @@ glm::vec2 polarToCartesian(float angle, float m) {
 	return { m * std::cos(a), m * std::sin(a) };
 }
 
-
 void lidarDraw() {
 	ofPushMatrix();
-	ofTranslate(glm::vec2(ofGetWindowWidth(), ofGetWindowHeight())*.5f);
+	ofTranslate(glm::vec2(ofGetWindowWidth(), ofGetWindowHeight()) * .5f);
 
 	float scale = uiLidar->pFloat["scale"];
 	machado.scale = scale;
 	machado.stage = ofRectangle(
-						uiRects->pFloat["sx"] * scale,
-						uiRects->pFloat["sy"] * scale,
-						uiRects->pFloat["swidth"] * scale,
-						uiRects->pFloat["sheight"] * scale
-					);
-	
-	machado.alvo = ofRectangle(
-						uiRects->pFloat["ax"] * scale,
-						uiRects->pFloat["ay"] * scale,
-						uiRects->pFloat["awidth"] * scale,
-						uiRects->pFloat["aheight"] * scale
-					   );
+		uiRects->pFloat["sx"] * scale,
+		uiRects->pFloat["sy"] * scale,
+		uiRects->pFloat["swidth"] * scale,
+		uiRects->pFloat["sheight"] * scale);
 
-//	stage.draw();
+	machado.alvo = ofRectangle(
+		uiRects->pFloat["ax"] * scale,
+		uiRects->pFloat["ay"] * scale,
+		uiRects->pFloat["awidth"] * scale,
+		uiRects->pFloat["aheight"] * scale);
+
+	//	stage.draw();
 
 	ofSetColor(255);
-	for(auto &s : sensors_) {
+	for (auto & s : sensors_) {
 		s->update();
 		auto data = s->getResult();
 		ofSetColor(255, 0, 80);
 		ofDrawRectangle(-5, -5, 10, 10);
 
-
 		machado.has = false;
-		vector <glm::vec2> positions;
+		vector<glm::vec2> positions;
 		glm::vec2 soma { 0.0, 0.0 };
 
-		for(auto &d : data) {
-			if(d.quality > 0) {
+		for (auto & d : data) {
+			if (d.quality > 0) {
 
 				if (d.distance < uiLidar->pFloat["minDistance"]) {
-				if (d.angle < uiLidar->pFloat["maxAngle"] && d.angle > uiLidar->pFloat["minAngle"])
-					{
+					if (d.angle < uiLidar->pFloat["maxAngle"] && d.angle > uiLidar->pFloat["minAngle"]) {
 						//						cout << d.angle << endl;
 						glm::vec2 pos = polarToCartesian(d.angle + offAngle, d.distance);
 						positions.emplace_back(pos);
@@ -198,7 +200,6 @@ void lidarDraw() {
 						}
 					}
 				}
-
 			}
 		}
 
@@ -210,23 +211,23 @@ void lidarDraw() {
 					machado.setPos(soma);
 				}
 			}
-//			cout << "CHANGE " << has << endl;
+			//			cout << "CHANGE " << has << endl;
 		}
 
 		if (uiLidar->pBool["continuous"]) {
 			if (machado.has) {
 				soma /= positions.size();
 				machado.setPos(soma);
-//				sendOsc();
+				//				sendOsc();
 			}
 		}
 
 		//		cout << det << endl;
 
 		machado.draw();
-//		if (machado.has) {
-//
-//		}
+		//		if (machado.has) {
+		//
+		//		}
 
 		ofPath path;
 		path.setCircleResolution(120);
@@ -235,15 +236,12 @@ void lidarDraw() {
 		path.setFilled(false);
 		path.setStrokeWidth(1);
 		path.draw();
-
 	}
 	ofPopMatrix();
-
 }
 
-
 void lidarExit() {
-	for(auto &s : sensors_) {
+	for (auto & s : sensors_) {
 		cout << s->stop() << endl;
 	}
 }
@@ -252,9 +250,9 @@ void lidarSetup() {
 	machado.setupOsc();
 
 	auto sensor_list = ofxRPlidar::getDeviceList();
-	for(auto &sensor_info : sensor_list) {
+	for (auto & sensor_info : sensor_list) {
 		auto sensor = make_shared<ofxRPlidar>();
-		if(sensor->connect(sensor_info.getDevicePath())) {
+		if (sensor->connect(sensor_info.getDevicePath())) {
 			sensor->start();
 			sensors_.push_back(sensor);
 		}
