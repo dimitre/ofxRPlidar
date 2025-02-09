@@ -19,6 +19,7 @@ void sendOsc() {
 		sender.sendMessage(m, false);
 	} else {
 		m.setAddress("/limpa");
+		m.addFloatArg(0.0);
 		sender.sendMessage(m, false);
 	}
 }
