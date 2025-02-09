@@ -41,8 +41,8 @@ public:
 	A2();
 	virtual ~A2();
 	static std::vector<ofSerialDeviceInfo> getDeviceList();
-	bool connect(const std::string &serial_path, int baud_rate=115200);
-	bool reconnect(int baud_rate=115200);
+	bool connect(const std::string &serial_path, int baud_rate=460800);
+	bool reconnect(int baud_rate=460800);
 	bool disconnect();
 	bool isConnected() const;
 	bool start(bool threaded=true);
