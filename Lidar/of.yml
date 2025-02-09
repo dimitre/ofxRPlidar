@@ -1,0 +1,6 @@
+ofpath: ../../..
+addons:
+  - ofxMicroUI
+  - ofxRPLidar
+  - ofxNetwork
+  - ofxOsc
