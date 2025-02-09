@@ -1,12 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxRPlidar.h"
 #include "ofxMicroUI.h"
+#include "ofxMicroUISoftware.h"
+#include "ofxRPlidar.h"
 #include "ofxOsc.h"
-
-//#include "ofxMicroUISoftware.h"
-
 
 class ofApp : public ofBaseApp{
 	
@@ -20,7 +18,9 @@ public:
 	void keyReleased(int key);
 	
 	ofxMicroUI u { "u.txt" };
+	ofxMicroUISoftware soft { &u, "EmptyUIScenes", 1 };
 
+	ofxMicroUI * uiLidar = &u.uis["lidar"];
 #include "lidar.h"
 	
 private:

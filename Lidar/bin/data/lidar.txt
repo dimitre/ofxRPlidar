@@ -1,0 +1,11 @@
+label	LIDAR
+
+float	minDistance	0 2000 1000
+float	minAngle	0 360 60
+float	maxAngle	0 360 130
+float	scale	0 1 .3
+bool	continuous	0
+float	minAngle	0 360 60
+float	maxAngle	0 360 130
+float	scale	0 1 .3
+bool	continuous	0
