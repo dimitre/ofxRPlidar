@@ -4,3 +4,5 @@ addons:
   - ofxRPLidar
   - ofxNetwork
   - ofxOsc
+
+templates: [macos, zed, make]
