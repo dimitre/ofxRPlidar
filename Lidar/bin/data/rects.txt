@@ -1,6 +1,11 @@
 label	RECTS
 
 label	Projecao
+
+float	offx	-1000 1000 0
+float	offy	-1000 1000 0
+
+
 float	swidth	0 2000 1700
 float	sheight	0 4000 3000
 float	sx	2000 -2000 -900

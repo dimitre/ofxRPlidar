@@ -1,5 +1,7 @@
 <ofxMicroUI>2</ofxMicroUI>
 <elementsList>
+	<offx>300</offx>
+	<offy>-67</offy>
 	<swidth>1700</swidth>
 	<sheight>3000</sheight>
 	<sx>-1700</sx>

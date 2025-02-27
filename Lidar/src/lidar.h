@@ -25,8 +25,11 @@ public:
 	glm::vec2 pos { 0.0f, 0.0f };
 	glm::vec2 posStage { 0.0f, 0.0f };
 	glm::vec2 posAlvo { 0.0f, 0.0f };
+
 	bool inside = false;
 	bool limpa = false;
+
+	glm::vec2 offset { 0.0f };
 
 	ofxOscSender sender;
 
@@ -54,7 +57,6 @@ public:
 		inside = alvo.inside(pos);
 		// cout << "inside " << inside << endl;
 		// cout << alvo << endl;
-
 
 		posStage = glm::vec2 {
 			ofMap(pos.x, stage.x, stage.x + stage.width, 0.0, 1.0),
@@ -135,17 +137,20 @@ public:
 		ofPushStyle();
 
 		ofNoFill();
-		ofSetColor(0, 0, 255);
+		// ofSetColor(0, 0, 255);
+		ofSetColor(255, 0, 0);
 		ofDrawRectangle(stage);
+		ofDrawBitmapString("parede", stage.x + 5, stage.y + 20);
+
 		ofSetColor(0, 255, 0);
 		ofDrawRectangle(alvo);
-
+		ofDrawBitmapString("alvo", alvo.x + 5, alvo.y + 20);
 		if (has) {
 
 			if (inside) {
 				ofSetColor(0, 255, 0);
 			} else {
-				ofSetColor(0, 0, 255);
+				ofSetColor(255, 0, 0);
 			}
 
 			//			cout << det.x << endl;
@@ -153,6 +158,12 @@ public:
 			//			ofDrawCircle(det.x * uiLidar->pFloat["scale"], det.y * uiLidar->pFloat["scale"], 8.0);
 			ofDrawCircle(pos.x, pos.y, 8.0);
 		}
+
+		ofSetColor(0, 0, 255);
+
+		ofDrawCircle(0, 0, 10);
+		ofDrawBitmapString("lidar", 16, 5);
+
 		ofPopStyle();
 	}
 } machado;
@@ -164,7 +175,9 @@ glm::vec2 polarToCartesian(float angle, float m) {
 
 void lidarDraw() {
 	ofPushMatrix();
-	ofTranslate(glm::vec2(ofGetWindowWidth(), ofGetWindowHeight()) * .5f);
+	machado.offset = { uiRects->pFloat["offx"], uiRects->pFloat["offy"] };
+
+	ofTranslate(glm::vec2(ofGetWindowWidth(), ofGetWindowHeight()) * .5f + machado.offset);
 
 	float scale = uiLidar->pFloat["scale"];
 	machado.scale = scale;
@@ -241,6 +254,7 @@ void lidarDraw() {
 	path.setFilled(false);
 	path.setStrokeWidth(1);
 	path.draw();
+
 	machado.draw();
 	//		if (machado.has) {
 	//
@@ -267,38 +281,38 @@ void lidarSetup() {
 	}
 }
 
-struct testeSemLidar {
-public:
-	ofRectangle rectWall = { 500, 30, 300, 600 };
-	ofRectangle alvo = { 550, 200, 200, 200 };
-	glm::ivec2 pos;
-	bool com = false;
+// struct testeSemLidar {
+// public:
+// 	ofRectangle rectWall = { 500, 30, 300, 600 };
+// 	ofRectangle alvo = { 550, 200, 200, 200 };
+// 	glm::ivec2 pos;
+// 	bool com = false;
 
-	void draw() {
-		ofPushStyle();
-		ofDrawBitmapString("Lidar não encontrado, Simulador de machado no mouse", 500, 20);
-		ofNoFill();
-		ofSetColor(255, 0, 0);
-		ofDrawRectangle(rectWall);
-		ofSetColor(0, 255, 0);
-		ofDrawRectangle(alvo);
+// 	void draw() {
+// 		ofPushStyle();
+// 		ofDrawBitmapString("Lidar não encontrado, Simulador de machado no mouse", 500, 20);
+// 		ofNoFill();
+// 		ofSetColor(255, 0, 0);
+// 		ofDrawRectangle(rectWall);
+// 		ofSetColor(0, 255, 0);
+// 		ofDrawRectangle(alvo);
 
-		if (com) {
-			ofFill();
-			ofDrawCircle(pos.x, pos.y, 10);
-		}
-		ofPopStyle();
-	}
+// 		if (com) {
+// 			ofFill();
+// 			ofDrawCircle(pos.x, pos.y, 10);
+// 		}
+// 		ofPopStyle();
+// 	}
 
-	void mouse(glm::ivec2 xy) {
-		pos = xy;
-		com = true;
-	}
-	void clear() {
-		com = false;
-	}
-} teste;
+// 	void mouse(glm::ivec2 xy) {
+// 		pos = xy;
+// 		com = true;
+// 	}
+// 	void clear() {
+// 		com = false;
+// 	}
+// } teste;
 
-void testDraw() {
-	teste.draw();
-}
+// void testDraw() {
+// 	teste.draw();
+// }

@@ -3,6 +3,6 @@
 	<minDistance>650</minDistance>
 	<minAngle>181.5</minAngle>
 	<maxAngle>355.5</maxAngle>
-	<scale>0.166667</scale>
+	<scale>0.254167</scale>
 	<continuous>1</continuous>
 </elementsList>
