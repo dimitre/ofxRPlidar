@@ -1,7 +1,7 @@
 ofpath: ../../..
 addons:
   - ofxMicroUI
-  - ofxRPLidar
+  - ofxRPlidar
   - ofxNetwork
   - ofxOsc
 

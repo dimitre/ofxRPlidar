@@ -1,3 +1,5 @@
+#include "of3dGraphics.h"
+#include "ofGraphics.h"
 ofxMicroUI * uiLidar = &u.uis["lidar"];
 ofxMicroUI * uiRects = &u.uis["rects"];
 
@@ -19,10 +21,10 @@ public:
 
 	bool has = false;
 	bool oldHas = false;
-	glm::vec2 det { 0.0, 0.0 };
-	glm::vec2 pos { 0.0, 0.0 };
-	glm::vec2 posStage { 0.0, 0.0 };
-	glm::vec2 posAlvo { 0.0, 0.0 };
+	glm::vec2 det { 0.0f, 0.0f };
+	glm::vec2 pos { 0.0f, 0.0f };
+	glm::vec2 posStage { 0.0f, 0.0f };
+	glm::vec2 posAlvo { 0.0f, 0.0f };
 	bool inside = false;
 	bool limpa = false;
 
@@ -34,6 +36,10 @@ public:
 		set.port = 8000;
 		set.broadcast = true;
 		sender.setup(set);
+	}
+
+	void clear() {
+		has = false;
 	}
 
 	void setPos(glm::vec2 v) {
@@ -91,7 +97,6 @@ public:
 			}
 			cout << "	/status/" << status << endl;
 			cout << "	/statusCode/" << s << endl;
-
 		}
 
 		if (has) {
@@ -196,20 +201,18 @@ void lidarDraw() {
 						positions.emplace_back(pos);
 						soma += pos;
 						ofDrawCircle(pos * uiLidar->pFloat["scale"], 3);
-
-
 					}
 				}
 			}
 		}
-		
+
 		if (positions.size() > 2) {
 			machado.has = true;
 		}
 
 		if (machado.oldHas != machado.has) {
 			machado.oldHas = machado.has;
-//			if (!uiLidar->pBool["continuous"])
+			//			if (!uiLidar->pBool["continuous"])
 			{
 				if (machado.has) {
 					soma /= positions.size();
@@ -228,20 +231,18 @@ void lidarDraw() {
 		}
 
 		//		cout << det << endl;
-
-		machado.draw();
-		//		if (machado.has) {
-		//
-		//		}
-
-		ofPath path;
-		path.setCircleResolution(120);
-		float r = uiLidar->pFloat["minDistance"] * uiLidar->pFloat["scale"];
-		path.arc(0, 0, r, r, uiLidar->pFloat["minAngle"] + offAngle, uiLidar->pFloat["maxAngle"] + offAngle);
-		path.setFilled(false);
-		path.setStrokeWidth(1);
-		path.draw();
 	}
+	ofPath path;
+	path.setCircleResolution(120);
+	float r = uiLidar->pFloat["minDistance"] * uiLidar->pFloat["scale"];
+	path.arc(0, 0, r, r, uiLidar->pFloat["minAngle"] + offAngle, uiLidar->pFloat["maxAngle"] + offAngle);
+	path.setFilled(false);
+	path.setStrokeWidth(1);
+	path.draw();
+	machado.draw();
+	//		if (machado.has) {
+	//
+	//		}
 	ofPopMatrix();
 }
 
@@ -262,4 +263,40 @@ void lidarSetup() {
 			sensors_.push_back(sensor);
 		}
 	}
+}
+
+struct testeSemLidar {
+public:
+	ofRectangle rectWall = { 500, 30, 300, 600 };
+	ofRectangle alvo = { 550, 200, 200, 200 };
+	glm::ivec2 pos;
+	bool com = false;
+
+	void draw() {
+		ofPushStyle();
+		ofDrawBitmapString("Lidar não encontrado, Simulador de machado no mouse", 500, 20);
+		ofNoFill();
+		ofSetColor(255, 0, 0);
+		ofDrawRectangle(rectWall);
+		ofSetColor(0, 255, 0);
+		ofDrawRectangle(alvo);
+
+		if (com) {
+			ofFill();
+			ofDrawCircle(pos.x, pos.y, 10);
+		}
+		ofPopStyle();
+	}
+
+	void mouse(glm::ivec2 xy) {
+		pos = xy;
+		com = true;
+	}
+	void clear() {
+		com = false;
+	}
+} teste;
+
+void testDraw() {
+	teste.draw();
 }
