@@ -36,7 +36,9 @@ void ofApp::mousePressed(int x, int y, int button) {
         machado.clear();
     } else {
         machado.has = true;
-        machado.setPos({x, y});
+        float r = machado.scale;
+        glm::vec2 pos =  glm::vec2{ x - ofGetWindowWidth() * .5f, y - ofGetWindowHeight() * .5f } / r;
+        machado.setPos(pos);
     // teste.mouse({x, y});
     }
 }

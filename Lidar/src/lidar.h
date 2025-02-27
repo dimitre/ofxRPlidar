@@ -40,6 +40,8 @@ public:
 
 	void clear() {
 		has = false;
+		inside = false;
+		sendOsc();
 	}
 
 	void setPos(glm::vec2 v) {
@@ -47,12 +49,12 @@ public:
 		cout << "detection setPos " << v << endl;
 		//		cout << det << endl;
 
-		inside = alvo.inside(pos);
+		pos = v * scale;
 
-		pos = glm::vec2 {
-			det.x * scale,
-			det.y * scale
-		};
+		inside = alvo.inside(pos);
+		// cout << "inside " << inside << endl;
+		// cout << alvo << endl;
+
 
 		posStage = glm::vec2 {
 			ofMap(pos.x, stage.x, stage.x + stage.width, 0.0, 1.0),
