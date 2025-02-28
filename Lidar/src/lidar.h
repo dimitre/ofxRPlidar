@@ -49,7 +49,7 @@ public:
 
 	void setPos(glm::vec2 v) {
 		det = v;
-		cout << "detection setPos " << v << endl;
+		// cout << "detection setPos " << v << endl;
 		//		cout << det << endl;
 
 		pos = v * scale;
