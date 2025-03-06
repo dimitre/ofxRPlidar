@@ -103,7 +103,8 @@ public:
 			cout << "	/statusCode/" << s << endl;
 		}
 
-		if (has) {
+		// if (has)
+		{
 			{
 				ofxOscMessage m;
 				m.setAddress("/pos");
