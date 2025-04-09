@@ -1,5 +1,5 @@
 label	LIDAR
-
+fps
 radioNoLabel	presetsFolder	1 2 3
 presetsNoLabel	presets	0 1 2 3 4 5 6 7
 

@@ -3,6 +3,7 @@
 //#include <glm/vec3.hpp>
 
 void ofApp::setup() {
+	ofSetFrameRate(30);
 	lidarSetup();
 }
 
@@ -33,17 +34,18 @@ void ofApp::keyReleased(int key) {
 
 void ofApp::mousePressed(int x, int y, int button) {
 
-	// cout << "mousePressed button " << button << endl;
-	if (button == 2) {
-		// teste.clear();
-		machado.clear();
-	} else {
-		machado.has = true;
-		float r = machado.scale;
-		glm::vec2 pos = glm::vec2 { x - ofGetWindowWidth() * .5f - machado.offset.x,
-			y - ofGetWindowHeight() * .5f - machado.offset.y }
-			/ r;
-		machado.setPos(pos);
-		// teste.mouse({x, y});
+	if (uiLidar->pBool["mouse"]) {
+		// cout << "mousePressed button " << button << endl;
+		if (button == 2) {
+			// teste.clear();
+			machado.clear();
+		} else {
+			machado.has = true;
+			glm::vec2 pos { x - ofGetWindowWidth() * .5f - machado.offset.x,
+				y - ofGetWindowHeight() * .5f - machado.offset.y }
+			;
+			machado.setPos(pos);
+			// teste.mouse({x, y});
+		}
 	}
 }

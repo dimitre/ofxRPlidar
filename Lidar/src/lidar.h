@@ -6,7 +6,6 @@ ofxMicroUI * uiRects = &u.uis["rects"];
 ofRectangle stage;
 ofRectangle alvo;
 
-float offAngle = -90;
 
 //bool has = false;
 //bool oldHas = false;
@@ -18,6 +17,9 @@ public:
 	ofRectangle stage;
 	ofRectangle alvo;
 	float scale = 1.0;
+	float offAngle = -90;
+	bool flipAngle = true;
+
 
 	bool has = false;
 	bool oldHas = false;
@@ -52,7 +54,7 @@ public:
 		// cout << "detection setPos " << v << endl;
 		//		cout << det << endl;
 
-		pos = v * scale;
+		pos = v;
 
 		inside = alvo.inside(pos);
 		// cout << "inside " << inside << endl;
@@ -133,6 +135,13 @@ public:
 			cout << "	/posAlvo/" << posAlvo << endl;
 		}
 	}
+	
+	float fixAngle(float a) {
+		float angulo = flipAngle ? 360.0f - a : a;
+		angulo += offAngle;
+		angulo = fmod(angulo, 360.0f);
+		return angulo;
+	}
 
 	void draw() {
 		ofPushStyle();
@@ -182,6 +191,9 @@ void lidarDraw() {
 
 	float scale = uiLidar->pFloat["scale"];
 	machado.scale = scale;
+	machado.offAngle = uiLidar->pFloat["offAngle"];
+	machado.flipAngle = uiLidar->pBool["flipAngle"];
+
 	machado.stage = ofRectangle(
 		uiRects->pFloat["sx"] * scale,
 		uiRects->pFloat["sy"] * scale,
@@ -197,29 +209,53 @@ void lidarDraw() {
 	//	stage.draw();
 
 	ofSetColor(255);
+	
+	bool conectado = false;
 	for (auto & s : sensors_) {
 		s->update();
+		
+		
+		// vector com 504 pontos por frame
+		
 		auto data = s->getResult();
+		conectado = data.size() > 0;
+		
 		ofSetColor(255, 0, 80);
 		ofDrawRectangle(-5, -5, 10, 10);
 
 		machado.has = false;
 		vector<glm::vec2> positions;
-		glm::vec2 soma { 0.0, 0.0 };
+		glm::vec2 soma { 0.0f, 0.0f };
 
 		for (auto & d : data) {
-			if (d.quality > 0) {
-
-				if (d.distance < uiLidar->pFloat["minDistance"]) {
-					if (d.angle < uiLidar->pFloat["maxAngle"] && d.angle > uiLidar->pFloat["minAngle"]) {
-						//						cout << d.angle << endl;
-						glm::vec2 pos = polarToCartesian(d.angle + offAngle, d.distance);
-						positions.emplace_back(pos);
-						soma += pos;
-						ofDrawCircle(pos * uiLidar->pFloat["scale"], 3);
-					}
-				}
+			if (d.quality == 0 || d.distance > uiLidar->pFloat["maxDistance"]) {
+				continue;
 			}
+
+			float angulo { machado.fixAngle(d.angle) };
+			glm::vec2 pos { polarToCartesian(angulo, d.distance) * scale };
+				
+			if (machado.stage.inside(pos)) {
+				positions.emplace_back(pos);
+				soma += pos;
+				ofDrawCircle(pos, 3);
+			}
+				
+				
+//				if (d.distance < uiLidar->pFloat["maxDistance"] &&
+//					d.distance > uiLidar->pFloat["minDistance"]
+//					) {
+//					if (angulo < machado.fixAngle(uiLidar->pFloat["maxAngle"]) && angulo > machado.fixAngle(uiLidar->pFloat["minAngle"])) {
+//						//						cout << d.angle << endl;
+//						
+//
+//						glm::vec2 pos = polarToCartesian(
+//														 angulo, d.distance);
+//						positions.emplace_back(pos);
+//						soma += pos;
+//						ofDrawCircle(pos * uiLidar->pFloat["scale"], 3);
+//					}
+//				}
 		}
 
 		if (positions.size() > 2) {
@@ -245,22 +281,36 @@ void lidarDraw() {
 				//				sendOsc();
 			}
 		}
-
+		
 		//		cout << det << endl;
 	}
-	ofPath path;
-	path.setCircleResolution(120);
-	float r = uiLidar->pFloat["minDistance"] * uiLidar->pFloat["scale"];
-	path.arc(0, 0, r, r, uiLidar->pFloat["minAngle"] + offAngle, uiLidar->pFloat["maxAngle"] + offAngle);
-	path.setFilled(false);
-	path.setStrokeWidth(1);
-	path.draw();
+	
+//	ofPath path;
+//	path.setCircleResolution(120);
+//	path.setFilled(false);
+//	path.setStrokeWidth(1);
+//	{
+//		float r = uiLidar->pFloat["maxDistance"] * uiLidar->pFloat["scale"];
+//		path.arc(0, 0, r, r, machado.fixAngle(uiLidar->pFloat["minAngle"]), machado.fixAngle(uiLidar->pFloat["maxAngle"]));
+//	}
+//	
+//	{
+//		float r = uiLidar->pFloat["minDistance"] * uiLidar->pFloat["scale"];
+//		path.arcNegative(0, 0, r, r, machado.fixAngle(uiLidar->pFloat["maxAngle"]), machado.fixAngle(uiLidar->pFloat["minAngle"]));
+//	}
+//	path.close();
+//	path.draw();
 
 	machado.draw();
 	//		if (machado.has) {
 	//
 	//		}
 	ofPopMatrix();
+	
+	ofSetColor(conectado ? ofColor(0, 255, 0) : ofColor(255, 0, 0));
+	ofDrawRectangle(ofGetWindowWidth() - 30, 20, 10, 10);
+
+
 }
 
 void lidarExit() {

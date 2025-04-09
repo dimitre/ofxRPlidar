@@ -1,6 +1,9 @@
 <ofxMicroUI>2</ofxMicroUI>
 <elementsList>
-	<minDistance>1962.5</minDistance>
+	<minDistance>116.25</minDistance>
+	<maxDistance>1837.5</maxDistance>
+	<offAngle>-90</offAngle>
+	<flipAngle>0</flipAngle>
 	<minAngle>181.5</minAngle>
 	<maxAngle>355.5</maxAngle>
 	<scale>0.2</scale>
