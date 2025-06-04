@@ -24,9 +24,11 @@ namespace {
 	bool isDeviceRplidar(ofSerialDeviceInfo &device) {
 #if defined(TARGET_WIN32)
 		return ofIsStringInString(device.getDeviceName(), "Silicon Labs CP210x USB to UART Bridge");
+#elif defined(TARGET_LINUX)
+		return ofIsStringInString(device.getDeviceName(), "ttyUSB");
 #else
 		return ofIsStringInString(device.getDeviceName(), "cu.usbserial");
-	#endif
+#endif
 
 	}
 }
@@ -143,7 +145,8 @@ bool device::A2::connect(const string &serial_path, int baud_rate)
 					return "OK.";
 			}
 		}(health_info_.status));
-		ofLogVerbose("RPLIDAR", " (errorcode: %d)", health_info_.error_code);
+		uint16_t ec = health_info_.error_code;
+		ofLogVerbose("RPLIDAR", " (errorcode: %d)", ec);
 	} else {
 		ofLogError("RPLIDAR", "Error, cannot retrieve the lidar health code: %x", op_result);
 		return false;
