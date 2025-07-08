@@ -263,13 +263,16 @@ string device::A2::getSerialNumber() const
 
 vector<device::A2::ScannedData> device::A2::scan(bool ascend)
 {
-	vector<ScannedData> ret;
-	
+	// FIXME: This is always 720 here. make it static. in fact results are 501/503 in size.
 	rplidar_response_measurement_node_hq_t nodes[360*2];
 	size_t count = sizeof(nodes)/sizeof(rplidar_response_measurement_node_hq_t);
-	
 //	u_result ans = driver_->grabScanData(nodes, count);
 	u_result ans = driver_->grabScanDataHq(nodes, count);
+//		std::cout << "OWW " << count << std::endl;
+
+	vector<ScannedData> ret;
+//	ret.reserve(count);
+
 	if (IS_OK(ans) || ans == RESULT_OPERATION_TIMEOUT) {
 		if(ascend) {
 			driver_->ascendScanData(nodes, count);
@@ -291,8 +294,8 @@ vector<device::A2::ScannedData> device::A2::scan(bool ascend)
 			
 			data.sync = (nodes[i].quality & RPLIDAR_RESP_MEASUREMENT_SYNCBIT) != 0;
 //			data.angle = (nodes[i].angle_z_q14 >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT)/64.0f;
-			data.angle = (nodes[i].angle_z_q14  * 90.f) / 16384.f;
-			data.distance = nodes[i].dist_mm_q2/4.0f;
+			data.angle = (nodes[i].angle_z_q14 * 90.f) / 16384.f;
+			data.distance = nodes[i].dist_mm_q2 / 4.0f;
 			data.quality = nodes[i].quality >> RPLIDAR_RESP_MEASUREMENT_QUALITY_SHIFT;
 		}
 	} else {

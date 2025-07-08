@@ -2,16 +2,17 @@ label	RECTS
 
 label	Projecao
 
+float	scale	0 2 1
 float	offx	-1000 1000 0
 float	offy	-1000 1000 0
 
+float	sx	-2000 2000 -900
+float	sy	-3000 3000 0
 float	swidth	0 2000 1700
 float	sheight	0 4000 3000
-float	sx	2000 -2000 -900
-float	sy	3000 -3000 0
 
 label	Alvo
+float	ax	-2000 2000 -900
+float	ay	-3000 3000 0
 float	awidth	0 2000 1200
 float	aheight	0 2000 1200
-float	ax	2000 -2000 -900
-float	ay	3000 -3000 0

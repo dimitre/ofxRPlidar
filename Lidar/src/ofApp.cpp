@@ -3,11 +3,15 @@
 //#include <glm/vec3.hpp>
 
 void ofApp::setup() {
-	ofSetFrameRate(30);
+	ofSetFrameRate(24);
+//	ofSetFrameRate(0);
+//	ofSetVerticalSync(false);
 	lidarSetup();
 }
 
 void ofApp::update() {
+	lidarUpdateBlobs();
+//	lidarUpdate();
 }
 
 void ofApp::draw() {
@@ -23,7 +27,7 @@ void ofApp::draw() {
 }
 
 void ofApp::exit() {
-	lidarExit();
+//	lidarExit();
 }
 
 void ofApp::keyPressed(int key) {

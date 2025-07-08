@@ -967,6 +967,8 @@ namespace sl {
 
         sl_result setMotorSpeed(sl_u16 speed = DEFAULT_MOTOR_SPEED)
         {
+			std::cout << "setMotorSpeed " << speed << std::endl;
+
             rp::hal::AutoLocker l(_op_locker);
             if (!isConnected()) return SL_RESULT_OPERATION_NOT_SUPPORT;
 

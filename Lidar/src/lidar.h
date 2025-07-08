@@ -6,6 +6,8 @@ ofxMicroUI * uiRects = &u.uis["rects"];
 ofRectangle stage;
 ofRectangle alvo;
 
+vector<glm::vec2> positions;
+bool conectado = false;
 
 //bool has = false;
 //bool oldHas = false;
@@ -178,67 +180,111 @@ public:
 	}
 } machado;
 
-glm::vec2 polarToCartesian(float angle, float m) {
-	float a { glm::radians(angle) };
-	return { m * std::cos(a), m * std::sin(a) };
-}
 
-void lidarDraw() {
-	ofPushMatrix();
-	machado.offset = { uiRects->pFloat["offx"], uiRects->pFloat["offy"] };
 
-	ofTranslate(glm::vec2(ofGetWindowWidth(), ofGetWindowHeight()) * .5f + machado.offset);
-
-	float scale = uiLidar->pFloat["scale"];
-	machado.scale = scale;
-	machado.offAngle = uiLidar->pFloat["offAngle"];
-	machado.flipAngle = uiLidar->pBool["flipAngle"];
-
-	machado.stage = ofRectangle(
-		uiRects->pFloat["sx"] * scale,
-		uiRects->pFloat["sy"] * scale,
-		uiRects->pFloat["swidth"] * scale,
-		uiRects->pFloat["sheight"] * scale);
-
-	machado.alvo = ofRectangle(
-		uiRects->pFloat["ax"] * scale,
-		uiRects->pFloat["ay"] * scale,
-		uiRects->pFloat["awidth"] * scale,
-		uiRects->pFloat["aheight"] * scale);
-
-	//	stage.draw();
-
-	ofSetColor(255);
-	
-	bool conectado = false;
+void lidarUpdateBlobs() {
 	for (auto & s : sensors_) {
 		s->update();
+		if (!s->isFrameNew()) {
+			continue;
+		}
 		
+		vector < vector <glm::vec2> > blobs;
+		blobs.emplace_back();
+
+		bool createNewBlob = false;
+		int countEmpty = 0;
+		for (auto & d : s->getResult()) {
+			if (d.quality == 0 || d.distance > uiLidar->pFloat["maxDistance"]) {
+//				createNewBlob = true;
+				countEmpty ++;
+				if (countEmpty > 3) {
+					createNewBlob = true;
+				}
+				continue;
+			}
+			
+			if (createNewBlob) {
+				countEmpty = 0;
+				blobs.emplace_back();
+				createNewBlob = false;
+			}
+
+
+			blobs.back().emplace_back( d.angle, d.distance );
+		}
+		
+		cout << "----- " << blobs.size() << endl;
+
+		for (auto & b : blobs) {
+			cout << b.size() << endl;
+		}
+	}
+}
+
+void lidarUpdate() {
+//	conectado = sensors_[0]->isConnected();
+//	cout << conectado << endl;
+	
+	for (auto & s : sensors_) {
+		s->update();
+		if (!s->isFrameNew()) {
+			continue;
+//			cout << "not frame new" << endl;
+		}
+		
+		
+		machado.scale = uiLidar->pFloat["scale"];
+		float scale = uiLidar->pFloat["scale"];
+
+		machado.stage = ofRectangle(
+			uiRects->pFloat["sx"] * scale,
+			uiRects->pFloat["sy"] * scale,
+			uiRects->pFloat["swidth"] * scale,
+			uiRects->pFloat["sheight"] * scale);
+
+		machado.alvo = ofRectangle(
+			uiRects->pFloat["ax"] * scale,
+			uiRects->pFloat["ay"] * scale,
+			uiRects->pFloat["awidth"] * scale,
+			uiRects->pFloat["aheight"] * scale);
+		
+		
+		positions.clear();
 		
 		// vector com 504 pontos por frame
 		
 		auto data = s->getResult();
-		conectado = data.size() > 0;
 		
-		ofSetColor(255, 0, 80);
-		ofDrawRectangle(-5, -5, 10, 10);
-
 		machado.has = false;
-		vector<glm::vec2> positions;
-		glm::vec2 soma { 0.0f, 0.0f };
 
+		vector < vector <glm::vec2> > blobs;
+		blobs.emplace_back();
+		
+		bool createNewBlob = false;
+		
 		for (auto & d : data) {
 			if (d.quality == 0 || d.distance > uiLidar->pFloat["maxDistance"]) {
 				continue;
+				createNewBlob = true;
 			}
 
-			float angulo { machado.fixAngle(d.angle) };
-			glm::vec2 pos { polarToCartesian(angulo, d.distance) * scale };
+			if (createNewBlob) {
+				blobs.emplace_back();
+			}
+			
+			blobs.back().emplace_back( d.angle, d.distance );
+			
+			glm::vec2 pos {
+				polarToCartesian(
+								 machado.fixAngle(d.angle),
+								 d.distance)
+				* scale
+			};
 				
 			if (machado.stage.inside(pos)) {
 				positions.emplace_back(pos);
-				soma += pos;
-				ofDrawCircle(pos, 3);
+//				ofDrawCircle(pos, 3);
 			}
 				
 				
@@ -247,7 +293,7 @@ void lidarDraw() {
 //					) {
 //					if (angulo < machado.fixAngle(uiLidar->pFloat["maxAngle"]) && angulo > machado.fixAngle(uiLidar->pFloat["minAngle"])) {
 //						//						cout << d.angle << endl;
-//						
+//
 //
 //						glm::vec2 pos = polarToCartesian(
 //														 angulo, d.distance);
@@ -258,33 +304,79 @@ void lidarDraw() {
 //				}
 		}
 
-		if (positions.size() > 2) {
-			machado.has = true;
-		}
 
-		if (machado.oldHas != machado.has) {
-			machado.oldHas = machado.has;
-			//			if (!uiLidar->pBool["continuous"])
-			{
-				if (machado.has) {
-					soma /= positions.size();
-				}
-				machado.setPos(soma);
-			}
-			//			cout << "CHANGE " << has << endl;
-		}
-
-		if (uiLidar->pBool["continuous"]) {
-			if (machado.has) {
-				soma /= positions.size();
-				machado.setPos(soma);
-				//				sendOsc();
-			}
-		}
+//		if () {
+//			if (machado.has) {
+//				soma /= positions.size();
+//				machado.setPos(soma);
+//				//				sendOsc();
+//			}
+//		}
 		
 		//		cout << det << endl;
 	}
+}
+
+void lidarDraw() {
+	ofPushMatrix();
+	machado.offset = { uiRects->pFloat["offx"], uiRects->pFloat["offy"] };
+//	float s = uiRects->pFloat["scale"];
+//	ofScale(s, s);
 	
+	ofTranslate(glm::vec2(ofGetWindowWidth(), ofGetWindowHeight()) * .5f + machado.offset);
+
+	float scale = uiLidar->pFloat["scale"];
+	machado.offAngle = uiLidar->pFloat["offAngle"];
+	machado.flipAngle = uiLidar->pBool["flipAngle"];
+
+
+	//	stage.draw();
+
+	ofSetColor(255);
+	
+	ofSetColor(255, 0, 80);
+	ofDrawRectangle(-5, -5, 10, 10);
+
+
+
+	
+	
+	
+	if (positions.size() > 2) {
+		   machado.has = true;
+	   }
+	   
+
+
+	   for (auto & pos : positions) {
+		   ofDrawRectangle(pos.x, pos.y, 2, 2);
+	   }
+	   
+	   vector<glm::vec2> positions2 (positions.end() - positions.size() / 3, positions.end());
+	   
+	   ofSetColor(255, 255, 80);
+	   for (auto & pos : positions2) {
+		   ofDrawRectangle(pos.x, pos.y, 2, 2);
+	   }
+
+	   if (machado.oldHas != machado.has || uiLidar->pBool["continuous"]) {
+		   machado.oldHas = machado.has;
+		   //			if (!uiLidar->pBool["continuous"])
+		   {
+			   if (machado.has) {
+				   glm::vec2 soma { 0.0f, 0.0f };
+				   for (auto & pos : positions2) {
+					   soma += pos;
+				   }
+				   soma /= (float)positions2.size();
+				   machado.setPos(soma);
+
+			   } else {
+				   machado.setPos({ 0.0f, 0.0f });
+			   }
+		   }
+		   //			cout << "CHANGE " << has << endl;
+	   }
 //	ofPath path;
 //	path.setCircleResolution(120);
 //	path.setFilled(false);
@@ -307,8 +399,8 @@ void lidarDraw() {
 	//		}
 	ofPopMatrix();
 	
-	ofSetColor(conectado ? ofColor(0, 255, 0) : ofColor(255, 0, 0));
-	ofDrawRectangle(ofGetWindowWidth() - 30, 20, 10, 10);
+//	ofSetColor(conectado ? ofColor(0, 255, 0) : ofColor(255, 0, 0));
+//	ofDrawRectangle(ofGetWindowWidth() - 30, 20, 10, 10);
 
 
 }
