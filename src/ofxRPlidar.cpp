@@ -77,6 +77,7 @@ bool device::A2::connect(const string &serial_path, int baud_rate)
 		return false;
 	}
 	
+	
 //	std::string desc;
 //	driver_->getModelNameDescriptionString(&desc);
 //	cout << desc << endl;
@@ -175,6 +176,11 @@ bool device::A2::disconnect()
 		return true;
 	}
 	return false;
+}
+
+bool device::A2::setPwm(int pwm) const
+{
+	return driver_ && driver_->setMotorPWM(pwm);
 }
 
 bool device::A2::isConnected() const

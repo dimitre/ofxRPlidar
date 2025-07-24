@@ -285,6 +285,12 @@ u_result AsyncTransceiver::sendMessage(message_autoptr_t& msg)
 
         _codec.onEncodeData(msg, txBuffer, &requiredBufferSize);
 
+//		std::cout << "Debug packet" << std::endl;
+//		for (int a=0; a<requiredBufferSize; a++) {
+//			std::cout << std::hex << int(txBuffer[a]) << std::endl;
+//		}
+		
+		
         int txSize = _bindedChannel->write(txBuffer, requiredBufferSize);
 
         if (txSize < 0) ans = RESULT_OPERATION_FAIL;

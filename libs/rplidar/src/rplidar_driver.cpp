@@ -140,6 +140,7 @@ namespace rp { namespace standalone{ namespace rplidar {
     
     u_result RPlidarDriver::checkMotorCtrlSupport(bool & support, _u32 timeout)
     {
+		std::cout << "RPlidarDriver::checkMotorCtrlSupport" << std::endl;
         MotorCtrlSupport motorSupport;
         u_result ans = (_lidarDrv)->checkMotorCtrlSupport(motorSupport, timeout);
         if (motorSupport == MotorCtrlSupportNone)

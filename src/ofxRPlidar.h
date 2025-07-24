@@ -49,6 +49,8 @@ public:
 	bool stop();
 	void update();
 	bool isFrameNew() const { return is_frame_new_; }
+	// Dimitre
+	bool setPwm(int pwm) const;
 	std::vector<ScannedData> scan(bool ascend=true);
 	std::vector<ScannedData> getResult();
 	std::string getSerialPath() const { return serial_path_; }

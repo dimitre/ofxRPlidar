@@ -114,6 +114,7 @@ typedef struct _sl_payload_set_scan_conf_t {
 
 
 #define DEFAULT_MOTOR_SPEED         (0xFFFFu)
+//#define DEFAULT_MOTOR_SPEED         300
 
 typedef struct _sl_lidar_payload_motor_pwm_t
 {

@@ -681,6 +681,8 @@ namespace sl {
 
         sl_result startScanExpress(bool force, sl_u16 scanMode, sl_u32 options = 0, LidarScanMode* outUsedScanMode = nullptr, sl_u32 timeout = DEFAULT_TIMEOUT)
         {
+			
+//			std::cout << ">>>> startScanExpress" << std::endl;
             rp::hal::AutoLocker l(_op_locker);
             if (!isConnected()) return SL_RESULT_OPERATION_NOT_SUPPORT;
 
@@ -832,12 +834,14 @@ namespace sl {
 
         sl_result checkMotorCtrlSupport(MotorCtrlSupport & support, sl_u32 timeout = DEFAULT_TIMEOUT)
         {
+			std::cout << "lidardrv::checkMotorCtrlSupport" << std::endl;
             rp::hal::AutoLocker l(_op_locker);
             if (!isConnected()) return SL_RESULT_OPERATION_NOT_SUPPORT;
 
             Result<nullptr_t> ans = SL_RESULT_OK;
-            support = MotorCtrlSupportNone;
+//            support = MotorCtrlSupportNone;
             _disableDataGrabbing();
+
 
             {
                 sl_lidar_response_device_info_t devInfo;
@@ -845,10 +849,13 @@ namespace sl {
                 if (!ans) return ans;
                 sl_u8 majorId = devInfo.model >> 4;
                 if (majorId >= BUILTIN_MOTORCTL_MINUM_MAJOR_ID) {
+					std::cout << "lidardrv::MotorCtrlSupportRpm" << std::endl;
+
                         support = MotorCtrlSupportRpm;
                         return ans;
                 }
                 else if(majorId >= A2A3_LIDAR_MINUM_MAJOR_ID){
+					std::cout << "lidardrv::A2A3_LIDAR_MINUM_MAJOR_ID" << std::endl;
 
                     rp::hal::AutoLocker l(_op_locker);
                     sl_lidar_payload_acc_board_flag_t flag;
@@ -870,7 +877,17 @@ namespace sl {
                         support = MotorCtrlSupportPwm;
                     }
                     return ans;
-                }
+				} else {
+					std::cout << "nem um nem outro" << std::endl;
+					// OWWW FIXME REMOVE
+//					support = MotorCtrlSupportRpm;
+					support = MotorCtrlSupportPwm;
+
+				}
+				
+				// OWWW FIXME REMOVE
+				support = MotorCtrlSupportPwm;
+
 
             }
             return SL_RESULT_OK;
@@ -967,7 +984,7 @@ namespace sl {
 
         sl_result setMotorSpeed(sl_u16 speed = DEFAULT_MOTOR_SPEED)
         {
-			std::cout << "setMotorSpeed " << speed << std::endl;
+//			std::cout << "setMotorSpeed 001 " << speed << std::endl;
 
             rp::hal::AutoLocker l(_op_locker);
             if (!isConnected()) return SL_RESULT_OPERATION_NOT_SUPPORT;
@@ -989,9 +1006,21 @@ namespace sl {
                     speed = 600;
                 }
             }
+			
+//			std::cout << "setMotorSpeed 002 " << speed << std::endl;
+			
             switch (_isSupportingMotorCtrl)
             {
             case MotorCtrlSupportNone:
+				std::cout << "MotorCtrlSupportNone" << std::endl;
+					
+//TESTE, remover
+//				{
+//					sl_lidar_payload_motor_pwm_t motor_pwm;
+//					motor_pwm.pwm_value = speed;
+//					ans = _sendCommandWithoutResponse(SL_LIDAR_CMD_SET_MOTOR_PWM, &motor_pwm, sizeof(motor_pwm), true);
+//				}
+					
                 if (_transeiver->getBindedChannel()->getChannelType() == CHANNEL_TYPE_SERIALPORT) {
                     ISerialPortChannel* serialChanel = (ISerialPortChannel*)_transeiver->getBindedChannel();
                     if (!speed) {
@@ -1002,6 +1031,7 @@ namespace sl {
                 }
                 break;
             case MotorCtrlSupportPwm:
+//				std::cout << "MotorCtrlSupportPwm" << std::endl;
                 sl_lidar_payload_motor_pwm_t motor_pwm;
                 motor_pwm.pwm_value = speed;
 
@@ -1011,8 +1041,12 @@ namespace sl {
                 delay(10);
                 break;
             case MotorCtrlSupportRpm:
-                sl_lidar_payload_motor_pwm_t motor_rpm;
-                motor_rpm.pwm_value = speed;
+//				std::cout << "MotorCtrlSupportRpm" << std::endl;
+//				std::cout << "setMotorSpeed 003 " << speed << std::endl;
+
+					// xaxa
+				sl_lidar_payload_hq_spd_ctrl_t motor_rpm;
+                motor_rpm.rpm = speed;
 
                 ans = _sendCommandWithoutResponse(SL_LIDAR_CMD_HQ_MOTOR_SPEED_CTRL, &motor_rpm, sizeof(motor_rpm), true);
                 if (!ans) return ans;
