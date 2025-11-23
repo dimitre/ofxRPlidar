@@ -5,4 +5,4 @@ addons:
   - ofxNetwork
   - ofxOsc
 
-templates: [macos, zed, make]
+templates: [macos, zed, chalet]

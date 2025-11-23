@@ -73,7 +73,7 @@ bool device::A2::connect(const string &serial_path, int baud_rate)
 	
 	// try to connect
 	if (IS_FAIL(driver_->connect(serial_path.c_str(), baud_rate))) {
-		ofLogError("RPLIDAR", "Error, cannot bind to the specified serial port %s.\n", serial_path.c_str());
+//		ofLogError("RPLIDAR", "Error, cannot bind to the specified serial port %s.\n", serial_path.c_str());
 		return false;
 	}
 	
@@ -91,7 +91,7 @@ bool device::A2::connect(const string &serial_path, int baud_rate)
 			// you can check the detailed failure reason
 			ofLogError("RPLIDAR", "Error, operation time out.");
 		} else {
-			ofLogError("RPLIDAR", "Error, unexpected error, code: %x", op_result);
+//			ofLogError("RPLIDAR", "Error, unexpected error, code: %x", op_result);
 			// other unexpected result
 		}
 		return false;
@@ -125,31 +125,32 @@ bool device::A2::connect(const string &serial_path, int baud_rate)
 	
 //	ofLogVerbose("RPLIDAR", "Serial Number: %s", serial_number.c_str());
 	
-	ofLogVerbose("RPLIDAR", "Version: %s", RPLIDAR_SDK_VERSION);
-	ofLogVerbose("RPLIDAR", "Firmware Ver: %d.%02d", device_info_.firmware_version>>8, device_info_.firmware_version & 0xFF);
-	ofLogVerbose("RPLIDAR", "Hardware Rev: %d", (int)device_info_.hardware_version);
+	// FIXME: update to fmt
+//	ofLogVerbose("RPLIDAR", "Version: %s", RPLIDAR_SDK_VERSION);
+//	ofLogVerbose("RPLIDAR", "Firmware Ver: %d.%02d", device_info_.firmware_version>>8, device_info_.firmware_version & 0xFF);
+//	ofLogVerbose("RPLIDAR", "Hardware Rev: %d", (int)device_info_.hardware_version);
 	
 	
 	// check the device health
 	////////////////////////////////////////
 	op_result = driver_->getHealth(health_info_);
 	if (IS_OK(op_result)) { // the macro IS_OK is the preperred way to judge whether the operation is succeed.
-		ofLogVerbose("RPLIDAR", "health status: %s", [](_u8 status) {
-			switch (status) {
-				case RPLIDAR_STATUS_OK:
-					return "OK.";
-				case RPLIDAR_STATUS_WARNING:
-					return "Warning.";
-				case RPLIDAR_STATUS_ERROR:
-					return "Error.";
-				default:
-					return "OK.";
-			}
-		}(health_info_.status));
-		uint16_t ec = health_info_.error_code;
-		ofLogVerbose("RPLIDAR", " (errorcode: %d)", ec);
+//		ofLogVerbose("RPLIDAR", "health status: %s", [](_u8 status) {
+//			switch (status) {
+//				case RPLIDAR_STATUS_OK:
+//					return "OK.";
+//				case RPLIDAR_STATUS_WARNING:
+//					return "Warning.";
+//				case RPLIDAR_STATUS_ERROR:
+//					return "Error.";
+//				default:
+//					return "OK.";
+//			}
+//		}(health_info_.status));
+//		uint16_t ec = health_info_.error_code;
+//		ofLogVerbose("RPLIDAR", " (errorcode: %d)", ec);
 	} else {
-		ofLogError("RPLIDAR", "Error, cannot retrieve the lidar health code: %x", op_result);
+//		ofLogError("RPLIDAR", "Error, cannot retrieve the lidar health code: %x", op_result);
 		return false;
 	}
 	
@@ -305,7 +306,7 @@ vector<device::A2::ScannedData> device::A2::scan(bool ascend)
 			data.quality = nodes[i].quality >> RPLIDAR_RESP_MEASUREMENT_QUALITY_SHIFT;
 		}
 	} else {
-		ofLogError("RPLIDAR", "error code: %x", ans);
+//		ofLogError("RPLIDAR", "error code: %x", ans);
 	}
 	return ret;
 }
